@@ -1,0 +1,529 @@
+[
+    {
+        "id": "dba283b68e4f12ae",
+        "type": "tab",
+        "label": "Raspberry Pi 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "93b0ad35.c1138",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "vcgencmd",
+        "addpay": false,
+        "append": "measure_temp",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "getCPUtemp",
+        "x": 370,
+        "y": 80,
+        "wires": [
+            [
+                "d15583f.1df5b8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "d15583f.1df5b8",
+        "type": "function",
+        "z": "dba283b68e4f12ae",
+        "name": "CPU Temp Function",
+        "func": "\nmsg.payload = msg.payload.replace(\"temp=\", \"\").replace(\"'C\\n\", \"\") + \"ºC\";\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 60,
+        "wires": [
+            [
+                "1dc8c470.f19eac",
+                "668d412384785bba"
+            ]
+        ]
+    },
+    {
+        "id": "1dc8c470.f19eac",
+        "type": "mqtt out",
+        "z": "dba283b68e4f12ae",
+        "name": "MQTT-CpuTemp",
+        "topic": "RaspberryPi4/CPUTemp",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "68b3dcc9db59256a",
+        "x": 900,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "747e3b6cae1148cc",
+        "type": "inject",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "topic": "",
+        "x": 140,
+        "y": 80,
+        "wires": [
+            [
+                "93b0ad35.c1138"
+            ]
+        ]
+    },
+    {
+        "id": "18bddc1bdf73959b",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "sudo reboot",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "Reboot",
+        "x": 340,
+        "y": 800,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "568b90ff4a8f3f94",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "sudo shutdown -h now",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "Shutdown",
+        "x": 340,
+        "y": 720,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "2ce3122437b2d154",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "top -d 0.5 -b -n2 | grep \"Cpu(s)\"|tail -n 1 | awk '{print $2 + $4}'",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "CPU Load",
+        "x": 350,
+        "y": 280,
+        "wires": [
+            [
+                "b0b7c8de22b0d41a"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "7ea1aa42a3ec434b",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "free -h",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "Memory",
+        "x": 340,
+        "y": 640,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b33ef9fd01df604f",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "df -h /",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "Disk Usage",
+        "x": 350,
+        "y": 520,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "7f96f766580b682c",
+        "type": "inject",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 145.4444465637207,
+        "y": 399.49998664855957,
+        "wires": [
+            [
+                "dc58108703ca5581"
+            ]
+        ]
+    },
+    {
+        "id": "dc58108703ca5581",
+        "type": "exec",
+        "z": "dba283b68e4f12ae",
+        "command": "hostname",
+        "addpay": false,
+        "append": "-I",
+        "useSpawn": "",
+        "timer": "",
+        "winHide": false,
+        "name": "Get Local IP",
+        "x": 350,
+        "y": 400,
+        "wires": [
+            [
+                "794ea01e669d091b"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "a8f74deb889f3080",
+        "type": "mqtt out",
+        "z": "dba283b68e4f12ae",
+        "name": "Send IP thru MQTT",
+        "topic": "RaspberryPi4/IPs",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "68b3dcc9db59256a",
+        "x": 855.4444465637207,
+        "y": 399.49998664855957,
+        "wires": []
+    },
+    {
+        "id": "794ea01e669d091b",
+        "type": "function",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "func": "\nmsg.payload = msg.payload.trim().split(' ');;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 545.4444465637207,
+        "y": 399.49998664855957,
+        "wires": [
+            [
+                "a8f74deb889f3080"
+            ]
+        ]
+    },
+    {
+        "id": "1fbc01d11a8c7614",
+        "type": "inject",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 280,
+        "wires": [
+            [
+                "2ce3122437b2d154"
+            ]
+        ]
+    },
+    {
+        "id": "8fbeeecc62eb8b7e",
+        "type": "mqtt out",
+        "z": "dba283b68e4f12ae",
+        "name": "Send IP thru MQTT",
+        "topic": "RaspberryPi4/CpuLoad",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "68b3dcc9db59256a",
+        "x": 850,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "b0b7c8de22b0d41a",
+        "type": "function",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "func": "\nmsg.payload = msg.payload.replace(/\\n/g, '') + '%';\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 260,
+        "wires": [
+            [
+                "8fbeeecc62eb8b7e"
+            ]
+        ]
+    },
+    {
+        "id": "668d412384785bba",
+        "type": "function",
+        "z": "dba283b68e4f12ae",
+        "name": "Fan Control",
+        "func": "msg.payload = msg.payload.replace(\"ºC\", \"\");  // Limpiar el dato\n\n// Verificamos si la temperatura supera los 50°C\nif (parseFloat(msg.payload) >= 50) {\n    msg.payload = 1;  // Encender el ventilador (enviar señal alta al GPIO)\n} else {\n    msg.payload = 0;  // Apagar el ventilador (enviar señal baja al GPIO)\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6257e7befa357fee",
+        "type": "function",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "func": "// Obtener la salida del comando\nconst output = msg.payload.split('\\n')[1].split(/\\s+/);\n\n// Extraer información\nconst total = output[1];\nconst usado = output[2];\nconst disponible = output[3];\nconst uso = output[4];\n\n// Crear el mensaje formateado\nmsg.payload = `Total Disk: ${total}, Used: ${usado}, Available: ${disponible}, Usage: ${uso}`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 520,
+        "wires": [
+            [
+                "2b645b4a218049c6"
+            ]
+        ]
+    },
+    {
+        "id": "03d5a8e792bb15f7",
+        "type": "inject",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 520,
+        "wires": [
+            [
+                "b33ef9fd01df604f"
+            ]
+        ]
+    },
+    {
+        "id": "2b645b4a218049c6",
+        "type": "mqtt out",
+        "z": "dba283b68e4f12ae",
+        "name": "Send IP thru MQTT",
+        "topic": "RaspberryPi4/DiskUsage",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "68b3dcc9db59256a",
+        "x": 870,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "6245098475bc765d",
+        "type": "inject",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 640,
+        "wires": [
+            [
+                "7ea1aa42a3ec434b"
+            ]
+        ]
+    },
+    {
+        "id": "9a43afba31e6f900",
+        "type": "function",
+        "z": "dba283b68e4f12ae",
+        "name": "",
+        "func": "// Get the output from the command\nconst output = msg.payload.split('\\n')[1].split(/\\s+/);\n\n// Extract information\nconst totalMemory = output[1]; // Total memory\nconst usedMemory = output[2]; // Used memory\nconst freeMemory = output[3]; // Free memory\nconst sharedMemory = output[4]; // Shared memory\nconst buffCache = output[5]; // Buffers/cache\nconst availableMemory = output[6]; // Available memory\n\n// Create the formatted message\nmsg.payload = `Total Memory: ${totalMemory}, Used: ${usedMemory}, Free: ${freeMemory}, Shared: ${sharedMemory}, Buffers/Cache: ${buffCache}, Available: ${availableMemory}`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 640,
+        "wires": [
+            [
+                "a2a1ad6a46b9baa0"
+            ]
+        ]
+    },
+    {
+        "id": "a2a1ad6a46b9baa0",
+        "type": "mqtt out",
+        "z": "dba283b68e4f12ae",
+        "name": "Send IP thru MQTT",
+        "topic": "RaspberryPi4/Memory",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "68b3dcc9db59256a",
+        "x": 870,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "68b3dcc9db59256a",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "Node-RED",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
